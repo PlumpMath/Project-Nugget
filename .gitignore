@@ -87,3 +87,9 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Built game
+built/
+
+# Personal Runtime settings
+personal.prc
