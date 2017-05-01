@@ -1,5 +1,5 @@
 # WINDOW SETTINGS:
-window-title Nugget Game
+window-title Project Nugget
 
 # RESOURCES
 default-model-extension .bam

@@ -93,3 +93,9 @@ built/
 
 # Personal Runtime settings
 personal.prc
+
+# Screenshots
+screenshots/
+
+# Settings
+settings.json

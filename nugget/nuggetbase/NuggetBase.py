@@ -1,5 +1,6 @@
-from panda3d.core import Filename, ExecutionEnvironment, WindowProperties
+from panda3d.core import Filename, ExecutionEnvironment, WindowProperties, CullBinEnums, CullBinManager, BamCache, loadPrcFileData
 from nugget.nuggetbase.GameStateFSM import GameStateFSM
+from nugget.nuggetbase.GameSettings import GameSettings
 from direct.showbase.ShowBase import ShowBase
 from direct.directnotify import DirectNotifyGlobal
 from direct.gui.DirectGui import *
@@ -13,7 +14,7 @@ class NuggetBase(ShowBase):
 
     def __init__(self):
         ShowBase.__init__(self)
-        __builtin__.__dev__ = config.GetBool('want-dev', False)
+        __builtin__.__dev__ = self.config.GetBool('want-dev', False)
 
         self.__fpsEnabled = False
         self.__isMainWindowOpen = False
@@ -26,6 +27,36 @@ class NuggetBase(ShowBase):
             self.accept('f12', self.takeScreenshot)
 
         self.gameStateFSM = GameStateFSM()
+
+        self.bamCache = BamCache.getGlobalPtr()
+        if __dev__:
+            flavor = self.config.GetString('dev-branch-flavor', '')
+            if flavor:
+                cachePath = '/cache/cahce_%s' % flavor
+            else:
+                cachePath = '/cache/cache'
+            self.bamCache.setRoot(Filename(cachePath))
+        else:
+            self.bamCache.setRoot(Filename('./cache'))
+
+        self.bamCache.setActive(False)
+        self.bamCache.setActive(self.config.GetBool('want-bam-cache', False))
+        self.bamCache.setCacheModels(False)
+        self.bamCache.setCacheTextures(True)
+        self.bamCache.setCacheCompressedTextures(True)
+
+        cullPtr = CullBinManager.getGlobalPtr()
+        cullPtr.addBin('background', CullBinEnums.BTFixed, 14)
+        cullPtr.addBin('foreground', CullBinEnums.BTFixed, 15)
+        cullPtr.addBin('objects', CullBinEnums.BTFixed, 16)
+        cullPtr.addBin('gui-fixed', CullBinEnums.BTFixed, 55)
+        cullPtr.addBin('gui-popup', CullBinEnums.BTUnsorted, 60)
+
+        self.currentSave = None
+        self.settings = GameSettings()
+        self.settings.load(GameSettings.DEFAULT_FILE_PATH)
+        self.settings.setRuntimeOptions()
+        loadPrcFileData('game_options', self.settings.settingsToPrcData())
 
     def isClientBuilt(self):
         try:
