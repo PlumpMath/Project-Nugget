@@ -1,7 +1,9 @@
 # WINDOW SETTINGS:
 window-title Project Nugget
+icon-filename etc/icon.ico
 
 # RESOURCES
+model-path resources/
 default-model-extension .bam
 
 # NOTIFY
