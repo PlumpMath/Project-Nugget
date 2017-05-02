@@ -56,8 +56,8 @@ class GameSettings(object):
     def settingsToPrcData(self):
         string = ''
         if not __debug__:
-            string = string + 'win-size ' + self.getWidth().__repr__() + ' ' + self.getHeight().__repr__() + '\n'
-            string = string + 'fullscreen ' + self.getFullscreen().__repr__() + '\n'    
+            string += 'win-size ' + self.getWidth().__repr__() + ' ' + self.getHeight().__repr__() + '\n'
+            string += 'fullscreen ' + self.getFullscreen().__repr__() + '\n'    
         return string        
 
     def load(self, path):
@@ -72,17 +72,17 @@ class GameSettings(object):
         data = json.loads(settingsFile.read())
         settingsFile.close()
 
-        self.version = int(data['version'])
-        self.window_width = int(data['window_width'])
-        self.window_height = int(data['window_height'])
-        self.fullscreen_width = int(data['fullscreen_width'])
-        self.fullscreen_height = int(data['fullscreen_height'])
-        self.fullscreen = bool(data['fullscreen'])
-        self.sound = bool(data['sound'])
-        self.sound_volume = int(data['sound_volume'])
-        self.music = bool(data['music'])
-        self.music_volume = int(data['music_volume'])
-        self.frame_rate = bool(data['frame_rate'])
+        self.version = self.verify(data, int, 'version', self.OPTIONS_VERSION)
+        self.window_width = self.verify(data, int, 'window_width', 800)
+        self.window_height = self.verify(data, int, 'window_height', 600)
+        self.fullscreen_width = self.verify(data, int, 'fullscreen_width', 800)
+        self.fullscreen_height = self.verify(data, int, 'fullscreen_height', 600)
+        self.fullscreen = self.verify(data, bool, 'fullscreen', False)
+        self.sound = self.verify(data, bool, 'sound', True)
+        self.sound_volume = self.verify(data, float, 'sound_volume', 1.0)
+        self.music = self.verify(data, bool, 'music', True)
+        self.music_volume = self.verify(data, float, 'music_volume', 1.0)
+        self.frame_rate = self.verify(data, bool, 'frame_rate', False)
 
     def save(self, path):
         
@@ -100,5 +100,29 @@ class GameSettings(object):
         data['frame_rate'] = self.frame_rate
 
         settingsFile = open(path, 'w')
-        settingsFile.write(json.dumps(data))
+        settingsFile.write(json.dumps(data, sort_keys=True, indent=4))
         settingsFile.close()
+
+    def verify(self, data, type, value, default):
+        if value not in data:
+            return default
+        value = data[value]
+        if not isinstance(value, type):
+            self.notify.warning('%s is not a instance of %s! Setting default value.' % (value, type.__name__))
+            return default
+        return value
+
+    def __str__(self):
+        output = 'Version: %s\n' % self.version
+        output += 'Window Width: %s\n' % self.window_width
+        output += 'Window Height: %s\n' % self.window_height
+        output += 'Fullscreen Width: %s\n' % self.fullscreen_width
+        output += 'Fullscreen Height: %s\n' % self.fullscreen_height
+        output += 'Fullscreen: %s\n' % self.fullscreen
+        output += 'Sound: %s\n' % self.sound
+        output += 'Sound Volume: %s\n' % self.sound_volume
+        output += 'Music: %s\n' % self.music
+        output += 'Music Volume: %s\n' % self.music_volume
+        output += 'Frame Rate: %s\n' % self.frame_rate
+        return output
+
