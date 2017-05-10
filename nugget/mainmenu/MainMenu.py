@@ -38,6 +38,12 @@ class MainMenu(DirectObject, StateData):
         #base.musicMgr.load(AudioGlobals.HELLO)
         #base.musicMgr.request(AudioGlobals.HELLO)
 
+        self.backgroundScreen = loader.loadModel('models/gui/titlescreen.egg')
+        self.backgroundScreen.reparentTo(base.aspect2d)
+        self.backgroundScreen.setPos(0, 2.73, 0)
+        self.backgroundScreen.setScale(3, 1, 2)
+        self.backgroundScreen.setBin('background', 1)
+
         self.buttonParent = NodePath('menu-button-parent')
         self.buttonParent.reparentTo(base.a2dTopLeft)
         self.buttonParent.setPos(0.55, 0, 0)
