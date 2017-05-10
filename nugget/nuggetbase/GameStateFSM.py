@@ -7,6 +7,7 @@
 from direct.fsm.FSM import FSM
 from direct.directnotify import DirectNotifyGlobal
 from nugget.mainmenu.MainMenu import MainMenu
+from nugget.nuggetgui.Gameover import Gameover
 import sys
 
 class GameStateFSM(FSM):
@@ -15,6 +16,7 @@ class GameStateFSM(FSM):
     def __init__(self):
         FSM.__init__(self, 'GameStateFSM')
         self.__mainMenu = None
+        self.__gameOver = None
         self.request('MainMenu')
 
     def enterMainMenu(self):
@@ -33,6 +35,16 @@ class GameStateFSM(FSM):
 
     def exitGame(self):
         pass
+
+    def enterGameover(self):
+        self.notify.info('Entering gameover')
+        self.__gameOver = Gameover('gameover-done-event')
+        self.__gameOver.enter()
+
+    def exitGameover(self):
+        if self.__gameOver:
+            self.__gameOver.exit()
+        self.ignore('gameover-done-event')
 
     def enterShutdown(self):
         self.notify.info('Shutting down....')

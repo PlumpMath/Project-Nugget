@@ -5,12 +5,14 @@
  """
 
 from panda3d.core import Filename, ExecutionEnvironment, WindowProperties, CullBinEnums, CullBinManager, BamCache, loadPrcFileData
-from nugget.nuggetbase.GameStateFSM import GameStateFSM
-from nugget.nuggetbase.GameSettings import GameSettings
 from direct.showbase.ShowBase import ShowBase
 from direct.directnotify import DirectNotifyGlobal
 from direct.gui.DirectGui import *
 from direct.task import Task
+from nugget.nuggetbase.GameStateFSM import GameStateFSM
+from nugget.nuggetbase.GameSettings import GameSettings
+from nugget.audio.AudioManagerBase import AudioManagerBase
+from nugget.audio.MusicManager import MusicManager
 import __builtin__
 import time
 import os
@@ -31,8 +33,6 @@ class NuggetBase(ShowBase):
 
         if config.GetBool('want-screenshots', True):
             self.accept('f12', self.takeScreenshot)
-
-        self.gameStateFSM = GameStateFSM()
 
         self.bamCache = BamCache.getGlobalPtr()
         if __dev__:
@@ -64,6 +64,13 @@ class NuggetBase(ShowBase):
         self.settings.setRuntimeOptions()
         loadPrcFileData('game_options', self.settings.settingsToPrcData())
 
+        self.accept('PandaPaused', self.disableAllAudio)
+        self.accept('PandaRestarted', self.enableAllAudio)
+        self.audioMgr = AudioManagerBase()
+        self.musicMgr = MusicManager()
+
+        self.gameStateFSM = GameStateFSM()
+
     def isClientBuilt(self):
         try:
             import buildData
@@ -93,7 +100,7 @@ class NuggetBase(ShowBase):
         pass
 
     def __setCursorAndIcon(self):
-        wp = WindowProperties()        
+        wp = WindowProperties()       
         if self.isClientBuilt():
             if sys.platform == 'darwin':
                 wp.setIconFilename(Filename.fromOsSpecific(os.path.join(os.getcwd(), 'icon500.ico')))
