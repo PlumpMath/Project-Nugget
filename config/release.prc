@@ -4,7 +4,7 @@ icon-filename etc/icon.ico
 
 # RESOURCES
 model-path resources/
-default-model-extension .bam
+default-model-extension .egg
 
 # NOTIFY
 default-directnotify-level info
