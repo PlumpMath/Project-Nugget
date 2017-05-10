@@ -99,3 +99,6 @@ screenshots/
 
 # Settings
 settings.json
+
+# Copyrighted audio
+resources/audio/hello.mp3
