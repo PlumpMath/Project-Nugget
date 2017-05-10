@@ -6,6 +6,7 @@ Project "Nugget" is an open source game developed by youtuber PatrckStatic's com
 <b>Programmers</b>
 
 * [thetestgame](https://github.com/thetestgame)
+* [bdevineed](https://github.com/bdevineed)
 
 <b>Artists</b>
 
